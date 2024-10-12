@@ -12,8 +12,8 @@ set -e
 ./gradlew clean dist
 
 # Copy the build outputs to /output
-cp -r distribution /output/distribution
-cp -r library /output/library
-cp -r build/libs /output/libs
+cp -r distribution/* /output/distribution
+cp -r library/* /output/library
+cp -r build/libs/* /output/build/libs
 
-echo "Build artifacts have been copied to /output."
+echo "Build artifacts have been copied to /output"

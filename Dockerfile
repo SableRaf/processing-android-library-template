@@ -36,14 +36,12 @@ RUN chmod +x gradlew
 
 # Copy the entrypoint script into the container
 COPY scripts/docker_entrypoint.sh /app/processing/docker_entrypoint.sh
-
-# Make the script executable
 RUN chmod +x /app/processing/docker_entrypoint.sh
 
 # Set up local.properties with SDK path
 RUN echo "sdk.dir=$ANDROID_HOME" > local.properties
 
-# Define the volume for output
+# Define the volume for /output
 VOLUME /output
 
 # Set the entrypoint to the script
