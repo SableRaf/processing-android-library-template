@@ -44,3 +44,27 @@ After having compiled and built your project successfully, you should be able to
 
 **Important note:** The source code of the library is located inside ```library/src``` to follow standard Gradle's project structure. If you make changes there during the debugging using Android Studio, and then use the compilation and packaging instructions above, the resulting library package will include your latest changes in the source code made in Android Studio.
 
+## Building With Docker
+
+You can also build the template using Docker. This avoids the need to install Gradle or Java on your local machine. 
+
+1. **Install Docker**
+Ensure you have Docker installed and running on your machine. If you need help, see Docker's [installation guide](https://docs.docker.com/get-docker/).
+
+1. **Build the Docker Image:**
+   Navigate to the root of the project and build the Docker image:
+
+   ```bash
+   docker build -t processing-android-library .
+   ```
+
+2. **Run the Docker Container:**
+   To run the build inside Docker and copy the output files to your local `/processing` directory, run:
+
+   ```bash
+   docker run --rm -v $(pwd)/processing:/output processing-android-library
+   ```
+
+   This will:
+   - Execute the Gradle build inside the container.
+   - Copy the generated build artifacts to your local `./processing` directory.
