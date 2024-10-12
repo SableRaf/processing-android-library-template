@@ -68,3 +68,13 @@ Ensure you have Docker installed and running on your machine. If you need help, 
    This will:
    - Execute the Gradle build inside the container.
    - Copy the generated build artifacts to your local `./processing` directory.
+3. **Copy Your Library to the Sketchbook:**
+
+> [!NOTE]
+> This step is only necessary if you build with Docker. If you run Gradle manually, the library will be automatically copied into the Processing Sketchbook directory.
+
+Run the script to copy your library to the Sketchbook:
+
+```bash
+./scripts/copy_to_sketchbook.sh
+```
