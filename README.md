@@ -59,7 +59,7 @@ Ensure you have Docker installed and running on your machine. If you need help, 
    ```
 
 2. **Run the Docker Container:**
-   To run the build inside Docker and copy the output files to your local `/processing` directory, run:
+   Run the Docker image with the following command:
 
    ```bash
    docker run --rm -v $(pwd)/processing:/output processing-android-library
@@ -68,6 +68,7 @@ Ensure you have Docker installed and running on your machine. If you need help, 
    This will:
    - Execute the Gradle build inside the container.
    - Copy the generated build artifacts to your local `./processing` directory.
+
 3. **Copy Your Library to the Sketchbook:**
 
 > [!NOTE]
