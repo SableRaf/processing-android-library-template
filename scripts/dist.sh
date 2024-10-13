@@ -147,7 +147,7 @@ echo "Docker container ran successfully."
 
 # Optionally copy distribution files to the sketchbook if -sketchbook argument was provided
 if [ "$SKETCHBOOK_COPY" = true ]; then
-    ./scripts/copy_to_sketchbook.sh -target "$TARGET_DIR"
+    ./scripts/copy_to_sketchbook.sh -source "$TARGET_DIR"
 fi
 
 # Add the target directory to .gitignore if it's not already listed
