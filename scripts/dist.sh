@@ -1,11 +1,12 @@
 #!/bin/bash
 set -e # Exit immediately if a command exits with a non-zero status
 
-# Default target directory
-TARGET_DIR=""
+# Default target directory (dist mode)
+TARGET_DIR="$(pwd)/processing/dist"
 
-# Check if the sketchbook argument is provided
+# Check if the sketchbook argument or classic mode is provided
 SKETCHBOOK_COPY=false
+CLASSIC_MODE=false
 
 # List of important files and directories we don't want to overwrite
 IMPORTANT_FILES=(
@@ -26,11 +27,16 @@ IMPORTANT_FILES=(
 while [[ "$#" -gt 0 ]]; do
     case $1 in
         -sketchbook) SKETCHBOOK_COPY=true ;; # Enable sketchbook copying
-        -target) TARGET_DIR="$2"; shift ;; # Set the target directory for output
+        -c) CLASSIC_MODE=true ;; # Enable classic mode (use processing/ instead of dist)
         *) echo "Unknown parameter passed: $1"; exit 1 ;;
     esac
     shift
 done
+
+# Switch to classic mode if -c flag is provided
+if [ "$CLASSIC_MODE" = true ]; then
+    TARGET_DIR="$(pwd)/processing"
+fi
 
 # Function to install Docker for Ubuntu/Debian-based systems
 install_docker_linux() {
@@ -111,11 +117,6 @@ elif [[ "$OSTYPE" == "darwin"* ]]; then
     start_docker_macos
 fi
 
-# Use default output directory if not set
-if [ -z "$TARGET_DIR" ]; then
-    TARGET_DIR="$(pwd)/output"
-fi
-
 # Check if the target directory exists and prompt the user
 if [ -d "$TARGET_DIR" ]; then
     read -p "Target directory '$TARGET_DIR' already exists. Do you want to overwrite it? (y/N): " confirm
@@ -139,7 +140,7 @@ done
 echo "Building Docker image..."
 docker build -t processing-android-library .
 
-# Run the Docker container and copy the build outputs to the /processing directory (mounted as /mnt_processing)
+# Run the Docker container and copy the build outputs to the appropriate directory
 echo "Running Docker container..."
 docker run --rm -v "$TARGET_DIR:/output" processing-android-library
 
@@ -148,21 +149,4 @@ echo "Docker container ran successfully."
 # Optionally copy distribution files to the sketchbook if -sketchbook argument was provided
 if [ "$SKETCHBOOK_COPY" = true ]; then
     ./scripts/copy_to_sketchbook.sh -source "$TARGET_DIR"
-fi
-
-# Add the target directory to .gitignore if it's not already listed
-if ! grep -q "^$TARGET_DIR$" .gitignore && ! grep -q "^\./$TARGET_DIR$" .gitignore; then
-    # Normalize the target directory by stripping the leading './' or '.' if present
-    CLEANED_TARGET_DIR=$(echo "$TARGET_DIR" | sed 's|^\./||' | sed 's|^\.$||')
-
-    # Add './' to the cleaned directory name for consistency in .gitignore
-    echo "Adding './$CLEANED_TARGET_DIR' to .gitignore..."
-
-    # Add a new line before appending the target directory to .gitignore
-    echo "" >> .gitignore
-    echo "./$CLEANED_TARGET_DIR" >> .gitignore
-
-    echo "'./$CLEANED_TARGET_DIR' has been added to .gitignore."
-else
-    echo "'$TARGET_DIR' is already in .gitignore."
 fi
