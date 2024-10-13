@@ -1,6 +1,17 @@
 #!/bin/bash
 set -e # Exit immediately if a command exits with a non-zero status
 
+# Check if the sketchbook argument is provided
+SKETCHBOOK_COPY=false
+
+while [[ "$#" -gt 0 ]]; do
+    case $1 in
+        -sketchbook) SKETCHBOOK_COPY=true ;; # Enable sketchbook copying
+        *) echo "Unknown parameter passed: $1"; exit 1 ;;
+    esac
+    shift
+done
+
 # Function to install Docker for Ubuntu/Debian-based systems
 install_docker_linux() {
     echo "Docker CLI is not installed. Installing Docker on Linux..."
@@ -24,7 +35,7 @@ install_docker_linux() {
 
 # Function to check if Docker is installed and install it if necessary
 install_docker_macos() {
-    echo "Docker CLI is not installed. Installing Docker on macOS..."
+    echo "Docker CLI is not installed. Installing Docker..."
     # Check if Homebrew is installed
     if ! command -v brew &> /dev/null; then
         echo "Homebrew is not installed. Installing Homebrew..."
@@ -56,7 +67,7 @@ check_docker() {
 # Check if Docker is running and start the daemon if necessary
 start_docker_linux() {
     if ! sudo systemctl is-active --quiet docker; then
-        echo "Starting Docker daemon on Linux..."
+        echo "Starting Docker daemon..."
         sudo systemctl start docker
     else
         echo "Docker daemon is already running."
@@ -66,15 +77,14 @@ start_docker_linux() {
 start_docker_macos() {
     # macOS uses Docker Desktop, so we can't start the daemon with systemctl
     if ! docker info > /dev/null 2>&1; then
-        echo "Please start Docker Desktop on macOS."
+        echo "Starting Docker Desktop..."
         open /Applications/Docker.app
-        echo "Waiting for Docker Desktop to start..."
         while ! docker info > /dev/null 2>&1; do
             sleep 5
         done
         echo "Docker Desktop has started."
     else
-        echo "Docker is already running on macOS."
+        echo "Docker is already running."
     fi
 }
 
@@ -97,3 +107,8 @@ echo "Running Docker container..."
 docker run --rm -v $(pwd)/processing:/output processing-android-library
 
 echo "Docker container ran successfully."
+
+# Optionally copy distribution files to the sketchbook if -sketchbook argument was provided
+if [ "$SKETCHBOOK_COPY" = true ]; then
+    ./scripts/copy_to_sketchbook.sh
+fi
