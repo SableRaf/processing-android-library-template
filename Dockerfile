@@ -1,5 +1,5 @@
-# Use a base image with OpenJDK 17 and Gradle 7.2
-FROM gradle:7.2-jdk17 as builder
+# Use a base image with OpenJDK 17 and Gradle 7.6.4
+FROM gradle:7.6.4-jdk17 as builder
 
 # Set environment variables for Android SDK
 ENV ANDROID_HOME /opt/android-sdk
