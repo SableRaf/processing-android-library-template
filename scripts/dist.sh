@@ -147,5 +147,22 @@ echo "Docker container ran successfully."
 
 # Optionally copy distribution files to the sketchbook if -sketchbook argument was provided
 if [ "$SKETCHBOOK_COPY" = true ]; then
-    ./scripts/copy_to_sketchbook.sh -source "$TARGET_DIR"
+    ./scripts/copy_to_sketchbook.sh -target "$TARGET_DIR"
+fi
+
+# Add the target directory to .gitignore if it's not already listed
+if ! grep -q "^$TARGET_DIR$" .gitignore && ! grep -q "^\./$TARGET_DIR$" .gitignore; then
+    # Normalize the target directory by stripping the leading './' or '.' if present
+    CLEANED_TARGET_DIR=$(echo "$TARGET_DIR" | sed 's|^\./||' | sed 's|^\.$||')
+
+    # Add './' to the cleaned directory name for consistency in .gitignore
+    echo "Adding './$CLEANED_TARGET_DIR' to .gitignore..."
+
+    # Add a new line before appending the target directory to .gitignore
+    echo "" >> .gitignore
+    echo "./$CLEANED_TARGET_DIR" >> .gitignore
+
+    echo "'./$CLEANED_TARGET_DIR' has been added to .gitignore."
+else
+    echo "'$TARGET_DIR' is already in .gitignore."
 fi
