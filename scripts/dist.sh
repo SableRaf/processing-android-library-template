@@ -1,0 +1,99 @@
+#!/bin/bash
+set -e # Exit immediately if a command exits with a non-zero status
+
+# Function to install Docker for Ubuntu/Debian-based systems
+install_docker_linux() {
+    echo "Docker CLI is not installed. Installing Docker on Linux..."
+    # Install Docker for Ubuntu/Debian-based systems
+    sudo apt-get update
+    sudo apt-get install -y \
+        apt-transport-https \
+        ca-certificates \
+        curl \
+        software-properties-common
+
+    # Add Docker’s official GPG key
+    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+
+    # Set up the stable repository
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+    sudo apt-get update
+    sudo apt-get install -y docker-ce docker-ce-cli containerd.io
+}
+
+# Function to check if Docker is installed and install it if necessary
+install_docker_macos() {
+    echo "Docker CLI is not installed. Installing Docker on macOS..."
+    # Check if Homebrew is installed
+    if ! command -v brew &> /dev/null; then
+        echo "Homebrew is not installed. Installing Homebrew..."
+        /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    fi
+
+    # Install Docker using Homebrew
+    brew install --cask docker
+    echo "Please open Docker Desktop manually to start the Docker daemon."
+    open /Applications/Docker.app
+}
+
+# Function to check if Docker is installed
+check_docker() {
+    if ! command -v docker &> /dev/null; then
+        if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+            install_docker_linux
+        elif [[ "$OSTYPE" == "darwin"* ]]; then
+            install_docker_macos
+        else
+            echo "Unsupported operating system. Please install Docker manually."
+            exit 1
+        fi
+    else
+        echo "Docker CLI is already installed."
+    fi
+}
+
+# Check if Docker is running and start the daemon if necessary
+start_docker_linux() {
+    if ! sudo systemctl is-active --quiet docker; then
+        echo "Starting Docker daemon on Linux..."
+        sudo systemctl start docker
+    else
+        echo "Docker daemon is already running."
+    fi
+}
+
+start_docker_macos() {
+    # macOS uses Docker Desktop, so we can't start the daemon with systemctl
+    if ! docker info > /dev/null 2>&1; then
+        echo "Please start Docker Desktop on macOS."
+        open /Applications/Docker.app
+        echo "Waiting for Docker Desktop to start..."
+        while ! docker info > /dev/null 2>&1; do
+            sleep 5
+        done
+        echo "Docker Desktop has started."
+    else
+        echo "Docker is already running on macOS."
+    fi
+}
+
+# Check if Docker is installed
+check_docker
+
+# Start Docker daemon based on the operating system
+if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+    start_docker_linux
+elif [[ "$OSTYPE" == "darwin"* ]]; then
+    start_docker_macos
+fi
+
+# Build the Docker image
+echo "Building Docker image..."
+docker build -t processing-android-library .
+
+# Run the Docker container and copy the build outputs to the local filesystem
+echo "Running Docker container..."
+docker run --rm -v $(pwd)/processing:/output processing-android-library
+
+echo "Docker container ran successfully."
