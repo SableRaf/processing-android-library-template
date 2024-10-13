@@ -7,7 +7,8 @@ library_name=$(grep "^library.name=" processing/resources/build.properties | cut
 
 # Check if the sketchbook location exists
 if [ -n "$sketchbook_location" ] && [ -d "$sketchbook_location" ]; then
-    echo "Copying build artifacts to sketchbook location: $sketchbook_location/libraries/$library_name"
+    echo "Sketchbook location: $sketchbook_location"
+    echo "Copying build artifacts to $sketchbook_location/libraries/$library_name"
     mkdir -p "$sketchbook_location/libraries/$library_name"
     cp -r processing/distribution/$library_name/* "$sketchbook_location/libraries/$library_name"
     echo "Library '$library_name' successfully copied to $sketchbook_location/libraries/$library_name"
