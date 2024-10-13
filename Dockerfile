@@ -27,10 +27,6 @@ WORKDIR /app/processing
 COPY processing/ /app/processing
 COPY library/ /app/library
 
-# Copy Gradle wrapper and build files to resolve dependencies
-COPY processing/build.gradle processing/settings.gradle processing/gradlew* /app/processing/
-COPY processing/gradle /app/processing/gradle
-
 # Make the Gradle wrapper executable
 RUN chmod +x gradlew
 
