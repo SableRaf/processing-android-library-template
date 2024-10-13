@@ -102,9 +102,9 @@ fi
 echo "Building Docker image..."
 docker build -t processing-android-library .
 
-# Run the Docker container and copy the build outputs to the local filesystem
+# Run the Docker container and copy the build outputs to the /processing directory (mounted as /mnt_processing)
 echo "Running Docker container..."
-docker run --rm -v $(pwd)/processing:/output processing-android-library
+docker run --rm -v $(pwd)/processing:/mnt_processing processing-android-library
 
 echo "Docker container ran successfully."
 
