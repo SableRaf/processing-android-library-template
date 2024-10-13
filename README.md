@@ -52,7 +52,7 @@ Here’s a more concise version:
 
 ## Automated Docker Build 
 
-Use the included script to build the library via Docker, which includes all dependencies like the Android SDK. The resulting artifacts will be placed in the `/processing` folder.
+Use the included script to build the library via Docker, which includes all dependencies like the Android SDK.
 
 #### macOS and Linux:
 
@@ -66,6 +66,12 @@ To also copy the distribution files to your Processing sketchbook, use the `-ske
 
 ```bash
 bash ./scripts/dist.sh -sketchbook
+```
+
+By default, the build artifacts will be placed in the `/processing/dist` folder. For the classic behavior, use the `-c` option, which will place the files in `/processing/build`, `/processing/distribution`, and `/processing/library`:
+
+```bash
+bash ./scripts/dist.sh -c
 ```
 
 #### Windows:
