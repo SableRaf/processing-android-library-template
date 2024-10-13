@@ -20,7 +20,7 @@ RUN yes | sdkmanager --licenses
 # Install Android SDK platform tools and API level 33
 RUN sdkmanager "platform-tools" "platforms;android-33"
 
-# Set the working directory to /app/processing where your project files are located
+# Set the working directory to /app/processing where your project files are located (in the container)
 WORKDIR /app/processing
 
 # Copy the processing and library directories into the Docker container
@@ -35,8 +35,8 @@ COPY processing/gradle /app/processing/gradle
 RUN chmod +x gradlew
 
 # Copy the entrypoint script into the container
-COPY scripts/docker_entrypoint.sh /app/processing/docker_entrypoint.sh
-RUN chmod +x /app/processing/docker_entrypoint.sh
+COPY scripts/docker_entrypoint.sh /app/scripts/docker_entrypoint.sh
+RUN chmod +x /app/scripts/docker_entrypoint.sh
 
 # Set up local.properties with SDK path
 RUN echo "sdk.dir=$ANDROID_HOME" > local.properties
@@ -45,4 +45,4 @@ RUN echo "sdk.dir=$ANDROID_HOME" > local.properties
 VOLUME /output
 
 # Set the entrypoint to the script
-ENTRYPOINT ["/app/processing/docker_entrypoint.sh"]
+ENTRYPOINT ["/app/scripts/docker_entrypoint.sh"]
