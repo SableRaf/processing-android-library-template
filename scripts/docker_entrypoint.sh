@@ -11,7 +11,7 @@ mkdir -p /mnt_processing/distribution
 mkdir -p /mnt_processing/library
 mkdir -p /mnt_processing/build/libs
 
-# Copy the build outputs to the output directories
+# Copy the build outputs to the output directories (mounted as /mnt_processing)
 cp -r /app/processing/distribution/* /mnt_processing/distribution
 cp -r /app/processing/library/* /mnt_processing/library
 cp -r /app/processing/build/libs/* /mnt_processing/build/libs
