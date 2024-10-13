@@ -3,8 +3,8 @@
 # Exit immediately if a command exits with a non-zero status
 set -e
 
-# Run the Gradle build
-/app/processing/gradlew clean dist
+# Run the Gradle build with the build cache enabled
+/app/processing/gradlew clean dist --build-cache
 
 # Ensure that the output directories exist
 mkdir -p /mnt_processing/distribution
