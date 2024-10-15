@@ -117,25 +117,6 @@ elif [[ "$OSTYPE" == "darwin"* ]]; then
     start_docker_macos
 fi
 
-# Check if the target directory exists and prompt the user
-if [ -d "$TARGET_DIR" ]; then
-    read -p "Target directory '$TARGET_DIR' already exists. Do you want to overwrite it? (y/N): " confirm
-    confirm=$(echo "$confirm" | tr '[:upper:]' '[:lower:]')  # Convert to lowercase using tr
-    if [[ "$confirm" != "y" ]]; then
-        echo "Operation canceled."
-        exit 1
-    fi
-fi
-
-# Check if the target directory contains important files or directories directly
-for file in "${IMPORTANT_FILES[@]}"; do
-    if [ -e "$TARGET_DIR/$file" ] && [ ! -d "$TARGET_DIR/$file" ]; then
-        echo "Error: Target directory contains important file or directory: $TARGET_DIR/$file"
-        echo "Operation canceled to avoid overwriting important files."
-        exit 1
-    fi
-done
-
 # Build the Docker image
 echo "Building Docker image..."
 docker build -t processing-android-library .
